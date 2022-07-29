@@ -1,0 +1,4 @@
+click==8.0.3
+colorama==0.4.4
+discord.py==1.7.3
+mctools==1.1.2
