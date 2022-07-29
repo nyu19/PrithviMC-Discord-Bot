@@ -10,6 +10,8 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 intents.guild_messages = True
+intents.reactions = True
+
 
 bot = discord.Bot(
     status=discord.Status.idle,

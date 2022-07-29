@@ -1,5 +1,4 @@
 from datetime import datetime
-from click import command
 import discord,re
 from discord.ext import commands,pages
 from discord.commands import slash_command,message_command,user_command
