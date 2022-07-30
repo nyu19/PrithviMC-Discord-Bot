@@ -41,6 +41,7 @@ async def on_ready():
         names.append(bot.get_guild(i).name)
 
     log.info(f"Debug Guilds : {names}")
+    print("Bot Started!")
 
 # bot.load_extension('')
 
