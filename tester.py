@@ -1,22 +1,9 @@
-import re
-from mctools import QUERYClient,PINGClient
-IP = 'vote.prithvimctk'
+print(open(".tmp",'r').read())
 
-ping = PINGClient(IP,timeout=1)
-# query = QUERYClient('140.238.228.116',25566,timeout=5)
-data = ping.get_stats()
-data.pop('favicon')
-data.pop('description')
+tmp = str(int(open(".tmp",'r').read())+1)
+print(open(".tmp",'w').write(tmp))
+print(open(".tmp",'r').read())
+print(open(".tmp",'r').read())
+print(open(".tmp",'r').read())
 
-# ansi = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-# result = ansi.sub('', data['description'])#.replace('  ','')
-
-print(data)
-
-# print(query.get_full_stats())
-
-
-
-# ping.stop()
-# query.stop()
 

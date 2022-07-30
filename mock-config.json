@@ -10,6 +10,11 @@
     },
     "SUGGESTION": {
         "CHANNEL_ID": 0
+    },
+    "TICKET": {
+        "TYPES": ["Minecraft","Discord","Others"],
+        "CATEGORY_ID": 0,
+        "STAFF_ROLE_ID": 0
     }
     
 }

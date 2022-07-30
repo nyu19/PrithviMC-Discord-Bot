@@ -22,7 +22,7 @@ bot = discord.Bot(
 
 
 def loadAllCogs():
-    print(os.listdir('./cogs/'))
+    # print(os.listdir('./cogs/'))
     for each in os.listdir('./cogs/'):
         if each.endswith('.py'):
             try:
