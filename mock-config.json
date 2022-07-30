@@ -4,9 +4,12 @@
     "SERVER_IP": "",
     "VERSION": "",
     "WELCOME": {
-        "CHANNEL_ID":0,
+        "CHANNEL_ID": 0,
         "WELCOME_BANNER_URL": "",
         "USE_WELCOME_AVATAR": false
+    },
+    "SUGGESTION": {
+        "CHANNEL_ID": 0
     }
     
 }
