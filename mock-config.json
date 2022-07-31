@@ -15,6 +15,11 @@
         "TYPES": ["Minecraft","Discord","Others"],
         "CATEGORY_ID": 0,
         "STAFF_ROLE_ID": 0
+    },
+    "ROLES":{
+        "ANNOUNCEMENT":0,
+        "DEVELOPMENT":0,
+        "EVENT":0
     }
     
 }
