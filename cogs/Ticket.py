@@ -1,7 +1,5 @@
 import asyncio
 from datetime import datetime, timedelta
-from email.policy import default
-from turtle import color
 import discord
 from discord.ext import commands
 from discord.commands import SlashCommandGroup, slash_command,message_command,user_command, Option
@@ -18,9 +16,11 @@ class CloseView(discord.ui.View):
 
     @discord.ui.button(label="Confirm",style=discord.ButtonStyle.green, emoji="✅")
     async def confirm_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.message.delete()
         await interaction.response.send_message(f"Support Ticket will be Closed <t:{int((datetime.now()+timedelta(seconds=5)).timestamp())}:R>")
         await asyncio.sleep(4)
         await interaction.channel.delete()
+        
         self.stop()
     
     @discord.ui.button(label="Cancel",style=discord.ButtonStyle.danger, emoji="❎")
@@ -69,6 +69,9 @@ class Ticket(commands.Cog):
     @tickets.command(description="Add Member to This/a ticket.")
     async def add(self,ctx: discord.ApplicationContext, member: Option(discord.Member,description="User you want to add to ticket.",required=True),
     ticket: Option(discord.TextChannel,description="Select Ticket Channel", required=False, default=None)):
+        if ctx.channel.category_id != config["TICKET"]["CATEGORY_ID"]:
+            await ctx.respond(content="You can only use this command in Ticket Channels.",ephemeral=True)
+            return
 
         if ctx.author.guild_permissions.administrator or ctx.guild.get_role(config["TICKET"]["STAFF_ROLE_ID"]) in ctx.author.roles:
             if ticket == None:
@@ -84,7 +87,9 @@ class Ticket(commands.Cog):
     @tickets.command(description="Remove Member from This/a ticket.")
     async def remove(self,ctx: discord.ApplicationContext, member: Option(discord.Member,description="User you want to add to ticket.",required=True),
     ticket: Option(discord.TextChannel,description="Select Ticket Channel", required=False, default=None)):
-
+        if ctx.channel.category_id != config["TICKET"]["CATEGORY_ID"]:
+            await ctx.respond(content="You can only use this command in Ticket Channels.",ephemeral=True)
+            return
         if ctx.author.guild_permissions.administrator or ctx.guild.get_role(config["TICKET"]["STAFF_ROLE_ID"]) in ctx.author.roles:
             if ticket == None:
                 await ctx.channel.set_permissions(member,read_messages=False,send_messages=False,attach_files=False)
