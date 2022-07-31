@@ -6,7 +6,7 @@ from mctools import PINGClient,formattertools
 import json
 config = json.load(open('./config.json','r'))
 
-def giveServerStatus():
+def giveServerStatus() -> discord.Embed:
     try:
         pinger = PINGClient(config['SERVER_IP'])
         data = pinger.get_stats()
@@ -52,9 +52,8 @@ class serverPinger(commands.Cog):
     @commands.slash_command(description="Status!")
     @discord.default_permissions(administrator=True)
     async def status(self, ctx: discord.ApplicationContext):
-        await ctx.defer()
+        await ctx.respond(content="Done!",ephemeral=True)
         await ctx.send(embed=giveServerStatus(),view=RefreshButton())
-        await ctx.respond(content="Done!",delete_after=5)
 
 
 

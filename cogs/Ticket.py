@@ -7,6 +7,57 @@ import json
 
 config = json.load(open("./config.json",'r'))
 
+async def openTicket(user: discord.Member,guild: discord.Guild,msg=None,type=config["TICKET"]["TYPES"][0]):
+    tmp = str(int(open(".tmp",'r').read())+1)
+    open('.tmp','w').write(tmp)
+    ticket_category = discord.utils.get(guild.categories, id=config["TICKET"]["CATEGORY_ID"])
+
+    overwrites = {
+        guild.default_role: discord.PermissionOverwrite(read_messages=False),
+        user: discord.PermissionOverwrite(read_messages=True,send_messages=True,attach_files=True),
+        guild.get_role(config["TICKET"]["STAFF_ROLE_ID"]): discord.PermissionOverwrite(read_messages=True,send_messages=True,attach_files=True)
+    }
+
+    tkt_chnl = await guild.create_text_channel(name=f"{user.name}︱{type}︱{tmp}",category=ticket_category,overwrites=overwrites)
+        
+    if msg == None:
+        msg = f"{user.mention} please elaborate your query here, So that our staff team can help you."
+    else:
+        msg = f"**Message:** ```{msg}```"
+
+    em = discord.Embed(title="Prithvi Support",description=msg, color=discord.Color.from_rgb(91, 235, 192),timestamp=datetime.now())
+    em.add_field(name="Type", value=type)
+
+    await tkt_chnl.send(content=user.mention,embed=em)
+
+
+
+class TicketOpenView(discord.ui.View):
+    def __init__(self):    
+        self.value = None
+        super().__init__(timeout=None)
+    
+    @discord.ui.button(label="Minecaft",style=discord.ButtonStyle.blurple,custom_id="minecraft", emoji="<:mccraft:677833864478982154>")
+    async def mc_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
+        await openTicket(user=interaction.user,guild=interaction.guild,type=butt.custom_id.capitalize())
+        await interaction.response.send_message(f"{interaction.user.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.",ephemeral=True)
+    
+    @discord.ui.button(label="Discord",style=discord.ButtonStyle.blurple,custom_id="discord", emoji="🤖")
+    async def discord_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
+        await openTicket(user=interaction.user,guild=interaction.guild,type=butt.custom_id.capitalize())
+        await interaction.response.send_message(f"{interaction.user.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.",ephemeral=True)
+
+    @discord.ui.button(label="Rank/Donations",style=discord.ButtonStyle.success,custom_id="ranks", emoji="⭐")
+    async def rank_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
+        await openTicket(user=interaction.user,guild=interaction.guild,type=butt.custom_id.capitalize())
+        await interaction.response.send_message(f"{interaction.user.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.",ephemeral=True)
+
+    @discord.ui.button(label="Other",style=discord.ButtonStyle.gray,custom_id="other")
+    async def other_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
+        await interaction.response.send_message(f"{interaction.user.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.",ephemeral=True)
+        await openTicket(user=interaction.user,guild=interaction.guild,type=butt.custom_id.capitalize())
+
+    
 
 class CloseView(discord.ui.View):
     def __init__(self):
@@ -34,6 +85,21 @@ class Ticket(commands.Cog):
 
     tickets = SlashCommandGroup("ticket", "Contact staff using Tickets",guild_ids=config["DEBUG_GUILDS"])
 
+    @commands.Cog.listener()
+    async def on_ready(self):
+        self.bot.add_view(TicketOpenView())
+
+    @tickets.command(description="Initiate")
+    @discord.default_permissions(administrator=True)
+    async def init(self,ctx:discord.ApplicationContext):
+        await ctx.respond("Done!",ephemeral=True)
+        await ctx.send(embed=discord.Embed(title="Prithvi MC Support Ticket!",
+        description="You raise a support request by opening a ticket! To open a ticket you can either use the **Buttons** provided below or user `/ticket open <type> <message/query>`",
+        color=discord.Color.from_rgb(91, 235, 192)).set_footer(text="Prithvi Staff"),view=TicketOpenView())
+        
+        
+            
+
     @tickets.command(description="Raise support ticket")
     async def open(
         self, 
@@ -44,28 +110,15 @@ class Ticket(commands.Cog):
         if ctx.channel.category_id == config["TICKET"]["CATEGORY_ID"]:
             await ctx.respond(content="Sorry You can't use this command in Ticket! Please use it in Bot Channel.",ephemeral=True)
             return
-        tmp = str(int(open(".tmp",'r').read())+1)
-        open('.tmp','w').write(tmp)
         
-        ticket_category = discord.utils.get(ctx.guild.categories, id=config["TICKET"]["CATEGORY_ID"])
+        await openTicket(user=ctx.author,guild=ctx.guild,msg=msg,type=type)
         
         await ctx.respond(f"{ctx.author.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.")
         
-        tkt_chnl = await ctx.guild.create_text_channel(name=f"{ctx.author.name}︱{type}︱{tmp}",category=ticket_category)
+        # await tkt_chnl.set_permissions(ctx.author,read_messages=True,send_messages=True,attach_files=True)
         
-        await tkt_chnl.set_permissions(ctx.author,read_messages=True,send_messages=True,attach_files=True)
         
-        if msg == None:
-            msg = f"{ctx.author.mention} please elaborate your query here, So that our staff team can help you."
-        else:
-            msg = f"**Message:** ```{msg}```"
 
-        em = discord.Embed(title="Prithvi Support",description=msg, color=discord.Color.from_rgb(91, 235, 192),timestamp=datetime.now())
-        em.add_field(name="Type", value=type)
-
-        await tkt_chnl.send(content=ctx.author.mention,embed=em)
-
-    
     @tickets.command(description="Add Member to This/a ticket.")
     async def add(self,ctx: discord.ApplicationContext, member: Option(discord.Member,description="User you want to add to ticket.",required=True),
     ticket: Option(discord.TextChannel,description="Select Ticket Channel", required=False, default=None)):
@@ -100,8 +153,6 @@ class Ticket(commands.Cog):
             
         else:
             await ctx.respond(embed=discord.Embed(title=f"You **Do not** have permission to execute this command."),timestamp=datetime.now(),color=discord.Color.red())
-
-    
     
     @tickets.command(description="Close This ticket.")
     async def close(self,ctx: discord.ApplicationContext):
