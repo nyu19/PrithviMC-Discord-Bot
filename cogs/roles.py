@@ -9,7 +9,12 @@ config = json.load(open('./config.json','r'))
 def embeder():
     embed=discord.Embed(
         title="**Get Your Roles By Clicking The Respective Buttons**",
-        description="description",
+        description=f"""The corresponding role will be pinged whenever anything is posted in specific channels. If you like to be notified when one of these things occur, please react with the following emojis to get the corresponding roles:
+
+<@{config["ROLES"]["ANNOUNCEMENT"]}>
+<@{config["ROLES"]["DEVELOPMENT"]}>
+<@{config["ROLES"]["EVENT"]}>
+""",
         color=discord.Color.blue()
     )
     
