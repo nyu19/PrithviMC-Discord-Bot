@@ -23,6 +23,8 @@ def giveServerStatus() -> discord.Embed:
         embed.add_field(name="**MOTD**",value=f"```{motd}```",inline=False)
         embed.add_field(name="**Ping**",value=f"`{int(data['time'])} ms`",inline=False)
         
+
+        
     except Exception: 
         embed = discord.Embed(
             title="**Prithvi MC Status**",
