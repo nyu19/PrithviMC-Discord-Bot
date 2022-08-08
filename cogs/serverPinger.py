@@ -8,30 +8,30 @@ config = json.load(open('./config.json','r'))
 
 def giveServerStatus() -> discord.Embed:
     try:
-        pinger = PINGClient(config['SERVER_IP'])
+        pinger = PINGClient(config['SERVER_IP'],config['SERVER_PORT'])
         data = pinger.get_stats()
         data.pop('favicon')
 
-        ansi = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        motd = ansi.sub('', data['description']).replace("  ",'')
         players = f"{data['players']['online']}/{data['players']['max']}"
 
         embed = discord.Embed(title="**Prithvi MC Status**",color=discord.Color.green(),timestamp=datetime.now())
         embed.add_field(name="**IP**",value=f"`play.prithvimc.tk`")
         embed.add_field(name="**Version**",value=f"`{config['VERSION']}`")
         embed.add_field(name="**Player Online**",value=f"`{players}`")
-        embed.add_field(name="**MOTD**",value=f"```{motd}```",inline=False)
+        embed.set_thumbnail(config["SERVER_ICON_URL"])
+        # embed.add_field(name="**MOTD**",value=f"```{motd}```",inline=False)
         embed.add_field(name="**Ping**",value=f"`{int(data['time'])} ms`",inline=False)
         
 
         
-    except Exception: 
+    except Exception as ee: 
         embed = discord.Embed(
             title="**Prithvi MC Status**",
             description="Server is **Offline!** Please Try again later.",
             color=discord.Color.red(),
             timestamp=datetime.now()
         )
+        raise ee
     pinger.stop()
     return embed
 
