@@ -22,6 +22,10 @@
         "ANNOUNCEMENT":0,
         "DEVELOPMENT":0,
         "EVENT":0
+    },
+    "PANEL":{
+        "URL": "https://panel.example.com",
+        "API_TOKEN": "ReplaceThisWithToken"
     }
     
 }

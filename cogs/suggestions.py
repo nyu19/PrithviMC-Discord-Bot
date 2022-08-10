@@ -24,6 +24,9 @@ class suggestions(commands.Cog):
                 em.clear_fields()
                 em.add_field(name="Verdict", value='❎ Suggestion **Rejected** by ' + user.name)
                 em.colour = discord.Color.red()
+            
+            else:           # remove if any error regrading this
+                return      #
 
             await reaction.message.edit(embed=em)
             await reaction.message.clear_reactions()
