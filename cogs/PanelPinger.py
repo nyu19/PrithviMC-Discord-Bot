@@ -39,10 +39,10 @@ def giveServerStatus() -> discord.Embed:
         embed.add_field(name=f"**{i['name']}**",value=f"""**Status:** {parseStatus(str(data['current_state']))}
 **Memory:** `{szu.converter(data['resources']['memory_bytes'])} / {i['limits']['memory']}`
 **Disk:** `{szu.converter(data['resources']['disk_bytes'])} / {i['limits']['disk']}` 
-**CPU:** `{data['resources']['cpu_absolute']} / {i['limits']['cpu']} %`""",inline=True)
+**CPU:** `{data['resources']['cpu_absolute']} / {i['limits']['cpu']} %`""",inline=False)
 
 
-    embed.set_thumbnail(config['SERVER_ICON_URL'])
+    embed.set_thumbnail(url=config['SERVER_ICON_URL'])
     return embed
 
 class RefreshButton(discord.ui.View):
