@@ -18,7 +18,7 @@ def parseStatus(st:str):
 
 def giveServerStatus() -> discord.Embed:
     embed = discord.Embed(
-        title="**Panel Server Status**",
+        title="**Panel Status**",
         color=discord.Color.from_rgb(59, 130, 246),
         timestamp=datetime.now(),
     )
@@ -39,11 +39,10 @@ def giveServerStatus() -> discord.Embed:
         embed.add_field(name=f"**{i['name']}**",value=f"""**Status:** {parseStatus(str(data['current_state']))}
 **Memory:** `{szu.converter(data['resources']['memory_bytes'])} / {i['limits']['memory']}`
 **Disk:** `{szu.converter(data['resources']['disk_bytes'])} / {i['limits']['disk']}` 
-**CPU:** `{data['resources']['cpu_absolute']} / {i['limits']['cpu']} %`
-""")
+**CPU:** `{data['resources']['cpu_absolute']} / {i['limits']['cpu']} %`""",inline=True)
 
 
-    
+    embed.set_thumbnail(config['SERVER_ICON_URL'])
     return embed
 
 class RefreshButton(discord.ui.View):
