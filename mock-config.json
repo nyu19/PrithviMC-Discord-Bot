@@ -26,6 +26,9 @@
     "PANEL":{
         "URL": "https://panel.example.com",
         "API_TOKEN": "ReplaceThisWithToken"
+    },
+    "UPDATE":{
+        "CHANNEL_ID":0
     }
     
 }
