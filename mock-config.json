@@ -16,7 +16,8 @@
     "TICKET": {
         "TYPES": ["Minecraft","Discord","Others"],
         "CATEGORY_ID": 0,
-        "STAFF_ROLE_ID": 0
+        "STAFF_ROLE_ID": 0,
+        "LOG_CHANNEL_ID": 0
     },
     "ROLES":{
         "ANNOUNCEMENT":0,

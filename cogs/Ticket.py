@@ -1,5 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
+import os
+from time import sleep
 import discord
 from discord.ext import commands
 from discord.commands import SlashCommandGroup, slash_command,message_command,user_command, Option
@@ -57,7 +59,7 @@ class TicketOpenView(discord.ui.View):
         await interaction.response.send_message(f"{interaction.user.mention} Your Support request has been raised! Please wait while our Staff reviews your Query.",ephemeral=True)
         await openTicket(user=interaction.user,guild=interaction.guild,type=butt.custom_id.capitalize())
 
-    
+waitforlog = []
 
 class CloseView(discord.ui.View):
     def __init__(self):
@@ -65,23 +67,47 @@ class CloseView(discord.ui.View):
         super().__init__(timeout=60)
     
 
+    async def sendLog(self,interaction: discord.Interaction):
+        channel = interaction.channel
+        
+        open("./Ticket Logs/"+channel.name+".md", "x", encoding="utf-8").close()
+        file = open("./Ticket Logs/"+channel.name+".md", "a", encoding="utf-8")
+    
+        async for msg in channel.history(oldest_first=True):
+            
+            if msg.content != "":
+                file.write(f"""{msg.author.name}#{msg.author.discriminator} → {msg.content}\n\n""")
+                
+        file.close()
+
+        sendfp = open("./Ticket Logs/"+channel.name+".md", "rb")
+        await interaction.guild.get_channel(config['TICKET']['LOG_CHANNEL_ID']).send(file=discord.File(fp=sendfp,filename=channel.name + ".md"))
+        sendfp.close()
+        os.remove("./Ticket Logs/"+channel.name+".md")
+        print("This 1 first")
+
     @discord.ui.button(label="Confirm",style=discord.ButtonStyle.green, emoji="✅")
     async def confirm_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
         await interaction.response.send_message(f"Support Ticket will be Closed <t:{int((datetime.now()+timedelta(seconds=5)).timestamp())}:R>")
+        await self.sendLog(interaction)
         await asyncio.sleep(4)
         await interaction.channel.delete()
-        
         self.stop()
+
     
     @discord.ui.button(label="Cancel",style=discord.ButtonStyle.danger, emoji="❎")
     async def cancel_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
         self.stop()
+        waitforlog.append({interaction.channel_id: False})
+        
 
 class Ticket(commands.Cog):
     def __init__(self,bot: discord.Bot):
         self.bot = bot
+
+    
 
     tickets = SlashCommandGroup("ticket", "Contact staff using Tickets",guild_ids=config["DEBUG_GUILDS"])
 
@@ -96,9 +122,7 @@ class Ticket(commands.Cog):
         await ctx.send(embed=discord.Embed(title="Prithvi MC Support Ticket!",
         description="You raise a support request by opening a ticket! To open a ticket you can either use the **Buttons** provided below or user `/ticket open <type> <message/query>`",
         color=discord.Color.from_rgb(91, 235, 192)).set_footer(text="Prithvi Staff"),view=TicketOpenView())
-        
-        
-            
+               
 
     @tickets.command(description="Raise support ticket")
     async def open(
@@ -161,7 +185,10 @@ class Ticket(commands.Cog):
             return
         
         close_view = CloseView()
-        await ctx.respond(embed=discord.Embed(title="Do you want to close this ticket?",color=discord.Color.red()),view=close_view)
+        await ctx.respond(embed=discord.Embed(title="Do you want to close this ticket?",color=discord.Color.red()),view=close_view,delete_after=60)
+        
+        
+
         
 
 
