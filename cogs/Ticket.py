@@ -84,7 +84,7 @@ class CloseView(discord.ui.View):
         await interaction.guild.get_channel(config['TICKET']['LOG_CHANNEL_ID']).send(file=discord.File(fp=sendfp,filename=channel.name + ".md"))
         sendfp.close()
         os.remove("./Ticket Logs/"+channel.name+".md")
-        print("This 1 first")
+        
 
     @discord.ui.button(label="Confirm",style=discord.ButtonStyle.green, emoji="✅")
     async def confirm_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
