@@ -3,8 +3,6 @@ import discord,requests
 from discord.ext import commands,pages,tasks
 from discord.commands import slash_command,message_command,user_command
 import json
-
-import tzlocal
 import utils.sizeUtils as szu
 config = json.load(open('./config.json','r'))
 
