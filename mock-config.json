@@ -26,7 +26,9 @@
     },
     "PANEL":{
         "URL": "https://panel.example.com",
-        "API_TOKEN": "ReplaceThisWithToken"
+        "API_TOKEN": "ReplaceThisWithToken",
+        "DAILY_UPDATE_TIME": "5:00",
+        "DAILY_UPDATE_USER_ID": 0
     },
     "UPDATE":{
         "CHANNEL_ID":0

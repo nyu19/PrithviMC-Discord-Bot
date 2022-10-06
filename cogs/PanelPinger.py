@@ -1,8 +1,12 @@
-from datetime import datetime
+import datetime
+import time
 import discord,requests
-from discord.ext import commands,pages
+import pytz
+from discord.ext import commands,pages,tasks
 from discord.commands import slash_command,message_command,user_command
 import json
+
+import tzlocal
 import utils.sizeUtils as szu
 config = json.load(open('./config.json','r'))
 
@@ -20,7 +24,7 @@ def giveServerStatus() -> discord.Embed:
     embed = discord.Embed(
         title="**Panel Status**",
         color=discord.Color.from_rgb(59, 130, 246),
-        timestamp=datetime.now(),
+        timestamp=datetime.datetime.now(),
     )
     fp = open('PanelCache.json','r')
     list_of_servers = list(json.load(fp))
@@ -53,13 +57,35 @@ class RefreshButton(discord.ui.View):
     async def button_callback(self, butt: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.edit_message(embed=giveServerStatus(),view=self)
 
+
+
 class PanelPinger(commands.Cog):
-    def __init__(self,bot):
+    def __init__(self,bot:discord.Bot):
         self.bot = bot
+        self.daily_update.start()
+        
 
     @commands.Cog.listener()
     async def on_ready(self):
         self.bot.add_view(RefreshButton())
+        
+    @tasks.loop(time=datetime.time(hour=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[0]),minute=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[1]),tzinfo=datetime.datetime.now().astimezone().tzinfo))
+    async def daily_update(self):
+        print("In Loop!")
+        em = giveServerStatus().fields
+        tempList = []
+        for each in em:
+            if each.value.count("🟢") < 1:
+                tempList.append(each.name)
+        
+        if len(tempList) != 0:
+            updateUser = await self.bot.get_or_fetch_user(config["PANEL"]["DAILY_UPDATE_USER_ID"])
+            await updateUser.send(f"**{updateUser.mention} The Following server is facing issue!**\n`{str(tempList).replace('*','')}` \nPlease visit: {config['PANEL']['URL']}")
+            
+        else:
+            return
+
+        
 
     @commands.slash_command(description="Status!")
     @discord.default_permissions(administrator=True)
