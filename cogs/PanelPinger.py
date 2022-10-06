@@ -1,7 +1,5 @@
 import datetime
-import time
 import discord,requests
-import pytz
 from discord.ext import commands,pages,tasks
 from discord.commands import slash_command,message_command,user_command
 import json
@@ -71,7 +69,7 @@ class PanelPinger(commands.Cog):
         
     @tasks.loop(time=datetime.time(hour=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[0]),minute=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[1]),tzinfo=datetime.datetime.now().astimezone().tzinfo))
     async def daily_update(self):
-        print("In Loop!")
+        # print("In Loop!")
         em = giveServerStatus().fields
         tempList = []
         for each in em:
