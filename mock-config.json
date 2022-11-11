@@ -34,6 +34,7 @@
         "CHANNEL_ID":0
     },
     "SPY":{
+        "BYPASS_IDS": [],
         "CONSOLE_ID": 0,
         "SPY_USER_ID": 0
     }
