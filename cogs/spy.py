@@ -13,7 +13,7 @@ class Spy(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self,message:discord.Message):
-        if(message.author == self.bot.user or len(message.attachments)>0):
+        if(message.author == self.bot.user or len(message.attachments) > 0 or self.bot.is_owner(message.author) ):
             return 
         
         if(message.channel.id==self.channel_Id):
