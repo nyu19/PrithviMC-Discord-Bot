@@ -1,3 +1,8 @@
+##################################
+# AUTHOR: Nakul Upasani (nyu19)  #
+# GITHUB: github.com/nyu19       #
+##################################
+
 import discord,os
 import json
 import utils.consoleLogger as log
