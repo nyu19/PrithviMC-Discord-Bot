@@ -4,6 +4,7 @@ from discord.ext import commands,pages,tasks
 from discord.commands import slash_command,message_command,user_command
 import json
 import utils.sizeUtils as szu
+import utils.consoleLogger as logger
 config = json.load(open('./config.json','r'))
 
 def parseStatus(st:str):
@@ -63,11 +64,13 @@ class PanelPinger(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        logger.info(f"Next Panel status update will be sent at " + str(self.daily_update.next_iteration))
         self.bot.add_view(RefreshButton())
         
     @tasks.loop(time=datetime.time(hour=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[0]),minute=int(str(config["PANEL"]["DAILY_UPDATE_TIME"]).split(":")[1]),tzinfo=datetime.datetime.now().astimezone().tzinfo))
     async def daily_update(self):
-        # print("In Loop!")
+        print("Updates Sent")
+        logger.alert("Panel daily update sent!")
         em = giveServerStatus().fields
         tempList = []
         for each in em:
